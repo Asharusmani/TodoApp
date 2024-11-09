@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
-class Todo extends StatelessWidget {
+class Todo extends StatefulWidget {
   Todo(
       {super.key,
       required this.taskName,
       required this.onChanged,
-      required this.taskCompleted});
+      required this.taskCompleted,
+      required this.deleteFunction});
   final String taskName;
   final bool taskCompleted;
   final Function(bool?)? onChanged;
+  final Function(BuildContext)? deleteFunction;
+
+  @override
+  State<Todo> createState() => _TodoState();
+}
+
+class _TodoState extends State<Todo> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -18,32 +27,45 @@ class Todo extends StatelessWidget {
         left: 20,
         bottom: 0,
       ),
-      child: Container(
-        padding: EdgeInsets.all(20),
-        decoration: BoxDecoration(
-            color: Colors.deepPurple, borderRadius: BorderRadius.circular(10)),
-        child: Row(
+      child: Slidable(
+        endActionPane: ActionPane(
+          motion: StretchMotion(),
           children: [
-            Checkbox(
-              value: taskCompleted,
-              onChanged: onChanged,
-              checkColor: Colors.black,
-              activeColor: Colors.white,
-              side: BorderSide(color: Colors.white),
-            ),
-            Text(
-              taskName,
-              style: TextStyle(
+            SlidableAction(
+              onPressed: widget.deleteFunction,
+              icon: Icons.delete,
+              borderRadius: BorderRadius.circular(15),
+            )
+          ],
+        ),
+        child: Container(
+          padding: EdgeInsets.all(15),
+          decoration: BoxDecoration(
+              color: Colors.deepPurple,
+              borderRadius: BorderRadius.circular(10)),
+          child: Row(
+            children: [
+              Checkbox(
+                value: widget.taskCompleted,
+                onChanged: widget.onChanged,
+                checkColor: Colors.black,
+                activeColor: Colors.white,
+                side: BorderSide(color: Colors.white),
+              ),
+              Text(
+                widget.taskName,
+                style: TextStyle(
                   fontSize: 15,
                   color: Colors.white,
-                  decoration: taskCompleted
+                  decoration: widget.taskCompleted
                       ? TextDecoration.lineThrough
                       : TextDecoration.none,
-                decorationColor: Colors.white,
-                decorationThickness: 2,
+                  decorationColor: Colors.white,
+                  decorationThickness: 2,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
